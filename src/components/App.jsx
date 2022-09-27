@@ -22,25 +22,25 @@ export class App extends Component {
 	async componentDidUpdate(_, prevState) {
 		const { page, query } = this.state;
 
-		if (prevState.query !== query) {
+		if (prevState.query !== query || prevState.page !== page) {
 			try {
 				this.setState({
 				isShowLoader: true,
 				isShowLoadMore: false,
 			});
 				const getData = await pixabayApi(query, page, PER_PAGE);
-				this.setState({
-					images: getData.data.hits,
-				});
+				
+					this.setState(prevState => ({
+					images: [...prevState.images, ...getData.data.hits],
+				}));
+
 
 				this.checkEmptyArr(getData.data.hits);
-				// this.setState({ page: 2 });
 
-				if (getData.data.total > PER_PAGE) {
-					this.setState({
-						isShowLoadMore: true,
-					});
+				if (getData.data.total > page * PER_PAGE) {
+					this.setState({ isShowLoadMore: true });
 				}
+
 			} catch (error) {
 				console.log(error);
 				this.setState({
@@ -51,34 +51,13 @@ export class App extends Component {
 		}
 		}
 
-		if (prevState.query === query && prevState.page !== page) {
-			try {
-				
-				this.setState({
-				isShowLoader: true,
-				isShowLoadMore: false,
-			});
-				const getData = await pixabayApi(query, page, PER_PAGE);
-
-				this.setState(prevState => ({
-					images: [...prevState.images, ...getData.data.hits],
-				}));
-
-				if (getData.data.total > page * PER_PAGE) {
-					this.setState({ isShowLoadMore: true });
-				}
-			} catch (error) {
-				console.log(error);
-			} finally {
-			this.setState({ isShowLoader: false });
-		}
-		}
 	}
 
 	// метод для получения значений формы из Searchbar
 	handleSubmitForm = searchQuery => {
 		// записывает в текущий стейт query значение из инпута для кнопки загрузить еще
 		this.setState(() => ({
+			images: [],
 			query: searchQuery,
 			page: 1,
 		}));
