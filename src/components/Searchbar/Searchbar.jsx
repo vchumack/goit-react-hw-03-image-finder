@@ -26,6 +26,7 @@ export class Searchbar extends Component {
 	// метод для обработки сабмита
 	handleSubmitForm = e => {
 		e.preventDefault();
+		
       this.props.onSubmit(this.state.searchQuery);
       this.reset();
 	};

@@ -55,12 +55,17 @@ export class App extends Component {
 
 	// метод для получения значений формы из Searchbar
 	handleSubmitForm = searchQuery => {
+		if (this.state.query === searchQuery && this.state.page === 1) {
+				return;
+			}
 		// записывает в текущий стейт query значение из инпута для кнопки загрузить еще
 		this.setState(() => ({
 			images: [],
 			query: searchQuery,
 			page: 1,
 		}));
+
+		
 	};
 
 	// метод для нажатия на кнопку загрузить еще
